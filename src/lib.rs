@@ -28,7 +28,7 @@ impl Universe {
         let size = (width * height) as usize;
         let mut cells = FixedBitSet::with_capacity(size);
         for i in 0..size {
-            cells.set(i, js_sys::Math::random() < 0.5)
+            cells.set(i, js_sys::Math::random() < 0.5);
         }
 
         Universe {
@@ -48,6 +48,24 @@ impl Universe {
 
     pub fn cells(&self) -> *const u32 {
         self.cells.as_slice().as_ptr()
+    }
+
+    pub fn set_width(&mut self, width: u32) {
+        self.width = width;
+        self.reset_cells();
+    }
+
+    pub fn set_height(&mut self, height: u32) {
+        self.height = height;
+        self.reset_cells();
+    }
+
+    fn reset_cells(&mut self) {
+        let size = (self.width * self.height) as usize;
+        self.cells = FixedBitSet::with_capacity(size);
+        for i in 0..size {
+            self.cells.set(i, false)
+        }
     }
 
     pub fn render(&self) -> String {
@@ -97,6 +115,19 @@ impl Universe {
         }
 
         self.cells = next;
+    }
+}
+
+impl Universe {
+    pub fn get_cells(&self) -> &FixedBitSet {
+        &self.cells
+    }
+
+    pub fn set_cells(&mut self, cells: &[(u32, u32)]) {
+        for (row, col) in cells.iter().cloned() {
+            let idx = self.get_index(row, col);
+            self.cells.set(idx, true);
+        }
     }
 }
 

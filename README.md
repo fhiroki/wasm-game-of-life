@@ -10,3 +10,9 @@ cd www
 npm install
 npm run start
 ```
+
+## test
+
+```bash
+wasm-pack test --firefox --headless
+```
