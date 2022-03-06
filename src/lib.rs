@@ -4,6 +4,13 @@ use fixedbitset::FixedBitSet;
 use std::fmt;
 use wasm_bindgen::prelude::*;
 extern crate js_sys;
+extern crate web_sys;
+
+macro_rules! log {
+    ( $( $t:tt )* ) => {
+        web_sys::console::log_1(&format!( $( $t )* ).into());
+    };
+}
 
 #[wasm_bindgen]
 #[repr(u8)]
@@ -23,6 +30,8 @@ pub struct Universe {
 #[wasm_bindgen]
 impl Universe {
     pub fn new() -> Universe {
+        utils::set_panic_hook();
+
         let width = 64;
         let height = 64;
         let size = (width * height) as usize;
@@ -30,6 +39,8 @@ impl Universe {
         for i in 0..size {
             cells.set(i, js_sys::Math::random() < 0.5);
         }
+
+        log!("universe (width: {},  height: {}) created.", width, height);
 
         Universe {
             width,
